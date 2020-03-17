@@ -1,22 +1,9 @@
 # Parseur_arithmetic
 
-## Repository Title Goes Here
+> Simple exercice to understand how work a parser. We'll build a shift/reduce parser for arithmetic expression. Operations priorities are handwritting in a first step (Parseur_AE_simple) then the order is learnt by a neural network (Parseur_AE_NN)
 
-> Subtitle or Short Description Goes Here
+** To remind **
 
-> ideally one sentence
-
-> include terms/tags that can be searched
-
-**Badges will go here**
-
-- build status
-- issues (waffle.io maybe)
-- devDependencies
-- npm package
-- coverage
-- slack
-- downloads
-- gitter chat
-- license
+- Not all information is included in the grammar
+- Find the most simple accurate example for testing a pseudo code by hand 
 - etc.
