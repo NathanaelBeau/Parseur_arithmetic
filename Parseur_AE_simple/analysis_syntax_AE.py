@@ -27,8 +27,8 @@ class Parser():
                 else:  # on reduce une expression
                     if self.shift_test():  # voir si fenetre est None
                         words = self.pile.split()
-                        if self.fenetre[0] == 'DOT' or self.fenetre[0] == 'DIVIDE':  # priorisation
-                            if words[-2] == 'ADD' or words[-2] == 'MINUS':
+                        if self.fenetre[0] in ('DOT', 'DIVIDE'):  # priorisation
+                            if words[-2] in ('ADD', 'MINUS'):
                                 self.shift()
                             else:
                                 self.pile = self.binary_reduce(self.pile)
@@ -118,13 +118,11 @@ class Parser():
             self.action.append('REDUCE')
             # voir comment on préfère récuperer pour l'arbre
             self.tree_construct('EXPRESSION', operation)
-            # self.tree_construct('EXPRESSION', ' '.join(operation))
             return self.reduce(' '.join(operation))
         else:
             self.action.append('REDUCE')
             # voir comment on préfère récuperer pour l'arbre
             self.tree_construct('EXPRESSION', operation)
-            # self.tree_construct('EXPRESSION', ' '.join(operation))
             return ' '.join(words[:-3]) + ' ' + self.reduce(' '.join(operation))
 
     def reduce_test(self, pile):

@@ -22,6 +22,11 @@ class ConsTree():
     def arity(self):
         return len(self.children)
 
+    def get_child(self,idx=0):
+        """@return the idx-th child of this node. 
+        """
+        return self.children[idx]
+
     def __str__(self):
         '''Pretty prints the tree
         '''
@@ -78,15 +83,30 @@ class TreeConstruct():
             return tree.children[0]
 
     def oracle(self, tree):
-
+        action = list()
+        print(tree.children)
+        for node in reversed(tree.children):
+            print(node.label)
+            if node.label == 'EXPRESSION':
+                for i in range(3):
+                    print(node.get_child[i])
+                    self.oracle(node.get_child[i]) # quel elt renvoyer a la fonction récursive
+                action.append('REDUCE')
+            elif node.label in ('ADD', 'DOT', 'DIVIDE', 'MINUS'):
+                action.append('SHIFT')
+            else:
+                action.extend(['SHIFT', 'REDUCE'])
+        print(action)
+        
 
 if __name__ == "__main__":
-    test = Lexical('2+2*3')
+    test = Lexical('2+3*2+2')
     testparse = Parser(test.lexicalAnalysis())
     testparse.parsing()
     action = testparse.action
     value = testparse.store
     construction_tree = TreeConstruct()
     tree = construction_tree.construction(action, value)
-    print(tree)
+    #print(tree)
     print(construction_tree.evaluate(tree))
+    construction_tree.oracle(tree)
