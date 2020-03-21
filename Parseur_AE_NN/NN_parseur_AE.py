@@ -1,5 +1,4 @@
-
-
+import torch
 
 class Neuronal_parseur:
 

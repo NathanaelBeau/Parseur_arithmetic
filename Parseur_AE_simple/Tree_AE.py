@@ -38,6 +38,7 @@ class TreeConstruct():
     def __init__(self): 
         self.tree = list()
         self.stock = list()
+        self.action = list()
 
     def construction(self, list_action, list_value):
         '''Construction of the arithmetic operation tree
@@ -83,30 +84,34 @@ class TreeConstruct():
             return tree.children[0]
 
     def oracle(self, tree):
-        action = list()
-        print(tree.children)
-        for node in reversed(tree.children):
-            print(node.label)
-            if node.label == 'EXPRESSION':
-                for i in range(3):
-                    print(node.get_child[i])
-                    self.oracle(node.get_child[i]) # quel elt renvoyer a la fonction récursive
-                action.append('REDUCE')
-            elif node.label in ('ADD', 'DOT', 'DIVIDE', 'MINUS'):
-                action.append('SHIFT')
+        size = tree.arity()
+        if size == 1:
+            if tree.label in ('ADD', 'DOT', 'DIVIDE', 'MINUS'):
+                self.action.append('SHIFT')
             else:
-                action.extend(['SHIFT', 'REDUCE'])
-        print(action)
-        
+                self.action.extend(['SHIFT', 'REDUCE'])
+        else: 
+            for node in tree.children:
+                print(node.label)
+                if node.label == 'EXPRESSION':
+                    for i in range(3):
+                        print(type(node.children[1]), node.children[1])
+                        self.oracle(node.children[i]) # quel elt renvoyer a la fonction récursive
+                    self.action.append('REDUCE')
+                elif node.label in ('ADD', 'DOT', 'DIVIDE', 'MINUS'):
+                    self.action.append('SHIFT')
+                else:
+                    self.action.extend(['SHIFT', 'REDUCE'])
 
 if __name__ == "__main__":
-    test = Lexical('2+3*2+2')
+    test = Lexical('2+3+2*3')
     testparse = Parser(test.lexicalAnalysis())
     testparse.parsing()
     action = testparse.action
     value = testparse.store
     construction_tree = TreeConstruct()
     tree = construction_tree.construction(action, value)
-    #print(tree)
-    print(construction_tree.evaluate(tree))
+    print(tree)
+    #print(construction_tree.evaluate(tree))
     construction_tree.oracle(tree)
+    print(construction_tree.action)
