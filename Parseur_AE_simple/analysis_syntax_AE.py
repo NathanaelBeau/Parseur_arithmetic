@@ -116,12 +116,10 @@ class Parser():
         operation = words[-3:]
         if length_operation == 3:
             self.action.append('REDUCE')
-            # voir comment on préfère récuperer pour l'arbre
             self.tree_construct('EXPRESSION', operation)
             return self.reduce(' '.join(operation))
         else:
             self.action.append('REDUCE')
-            # voir comment on préfère récuperer pour l'arbre
             self.tree_construct('EXPRESSION', operation)
             return ' '.join(words[:-3]) + ' ' + self.reduce(' '.join(operation))
 
