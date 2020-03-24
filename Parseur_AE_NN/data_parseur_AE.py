@@ -1,10 +1,13 @@
+import sys
+sys.path.append('/Users/n.beau/Desktop/Parseur_arithmetic/parseur_AE_simple')
+
 import numpy as np
 import pandas as pd
 
-from Parseur_AE_simple.analysis_syntax_AE import Parser
-from Parseur_AE_simple.analysis_lexical_AE import Lexical
+from analysis_syntax_AE import Parser
+from analysis_lexical_AE import Lexical
 
-class parseur_data():
+class Parseur_data():
 
     def __init__(self, data):
         self.data = data
