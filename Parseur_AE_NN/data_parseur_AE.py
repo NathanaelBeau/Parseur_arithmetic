@@ -1,13 +1,15 @@
-import sys
-sys.path.append('/Users/n.beau/Desktop/Parseur_arithmetic/parseur_AE_simple')
+#import sys
+#sys.path.append('/Users/n.beau/Desktop/Parseur_arithmetic')
 
-import numpy as np
-import pandas as pd
+#import numpy as np
+#import pandas as pd
 
-from analysis_syntax_AE import Parser
-from analysis_lexical_AE import Lexical
+#from sklearn import preprocessing
 
-class Parseur_data():
+from parseur_AE_simple.analysis_syntax_AE import Parser
+from parseur_AE_simple.analysis_lexical_AE import Lexical 
+
+class Create_Parseur_Dataset():
 
     def __init__(self, data):
         self.data = data
@@ -16,7 +18,7 @@ class Parseur_data():
 
 
 
-
 if __name__ == "__main__":
-    test = Lexical('2 +     3 +5')
-    print(test.lexicalAnalysis())
+    #test = Lexical('2 +     3 +5')
+    #print(test.lexicalAnalysis())
+    data = Create_Parseur_Dataset('2 + 3 +2')

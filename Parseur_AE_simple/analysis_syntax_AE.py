@@ -1,4 +1,6 @@
-from analysis_lexical_AE import Lexical
+import sys
+sys.path.append('/Users/n.beau/Desktop/Parseur_arithmetic')
+from parseur_AE_simple.analysis_lexical_AE import Lexical
 
 class Parser():
 
@@ -8,7 +10,8 @@ class Parser():
         self.pile = ''
         self.store = list()
         self.action = list()
-        self.value = 'test'
+        self.fenetre_stock = list()
+        self.pile_stock = list()
         self.grammar = {'EXPRESSION': ['NUMBER', 'LPAR EXPRESSION RPAR',
                         'EXPRESSION MINUS EXPRESSION', 'EXPRESSION ADD EXPRESSION',
                         'EXPRESSION DIVIDE EXPRESSION', 'EXPRESSION DOT EXPRESSION']
@@ -20,6 +23,8 @@ class Parser():
         operation.
         '''
         while self.pile != 'EXPRESSION' or self.expr != [] or self.fenetre != None:
+            self.fenetre_stock.append(self.fenetre)
+            self.pile_stock.append(self.pile.split())
             if not(self.unary_reduce_test(self.pile)):
                 if not(self.binary_reduce_test(self.pile)):
                     if self.shift_test():
@@ -153,3 +158,5 @@ if __name__ == "__main__":
     testparse = Parser(test.lexicalAnalysis())
     testparse.parsing()
     print(testparse.action)
+    print(len(testparse.fenetre_stock), testparse.fenetre_stock)
+    print(len(testparse.pile_stock), testparse.pile_stock)
