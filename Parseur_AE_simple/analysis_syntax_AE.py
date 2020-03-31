@@ -1,6 +1,4 @@
-import sys
-sys.path.append('/Users/n.beau/Desktop/Parseur_arithmetic')
-from parseur_AE_simple.analysis_lexical_AE import Lexical
+from .analysis_lexical_AE import Lexical
 
 class Parser():
 

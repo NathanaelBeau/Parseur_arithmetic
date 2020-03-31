@@ -1,10 +1,5 @@
-import sys
-import os
-import os.path
-import re
-from collections import Counter
-from analysis_syntax_AE import Parser
-from analysis_lexical_AE import Lexical
+from .analysis_syntax_AE import Parser
+from .analysis_lexical_AE import Lexical
 
 class ConsTree():
     '''That's your phrase structure tree.
