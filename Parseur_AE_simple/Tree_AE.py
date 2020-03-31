@@ -1,11 +1,11 @@
-from .analysis_syntax_AE import Parser
-from .analysis_lexical_AE import Lexical
+from parseur_AE_simple.analysis_lexical_AE import Lexical
+from parseur_AE_simple.analysis_syntax_AE import Parser
 
 
 class ConsTree:
     """That's your phrase structure tree.
     """
-    def __init__(self,label,children=None):
+    def __init__(self, label, children=None):
         self.label = label
         self.children = [] if children is None else children
 
@@ -18,7 +18,7 @@ class ConsTree:
     def arity(self):
         return len(self.children)
 
-    def get_child(self,idx=0):
+    def get_child(self, idx=0):
         """@return the idx-th child of this node. 
         """
         return self.children[idx]
@@ -109,6 +109,6 @@ if __name__ == "__main__":
     construction_tree = TreeConstruct()
     tree = construction_tree.construction(action, value)
     print(tree)
-    #print(construction_tree.evaluate(tree))
-    construction_tree.oracle(tree)
+    print(construction_tree.evaluate(tree))
+    #construction_tree.oracle(tree)
     print(construction_tree.action)

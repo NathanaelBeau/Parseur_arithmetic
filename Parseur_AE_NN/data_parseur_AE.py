@@ -148,6 +148,6 @@ class Create_Parseur_Dataset():
         return concatenation
 
 if __name__ == "__main__":
-    dataframe = Create_Parseur_Dataframe().create_dataframe(size_dataframe=100, size_example=11)
+    dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
     X = Create_Parseur_Dataset().create_dataset(dataframe)
     print(X)
