@@ -5,7 +5,6 @@ import random
 
 from parseur_AE_simple.analysis_syntax_AE import Parser
 
-
 class Create_Parseur_Dataframe():
 
     def __init__(self):
@@ -134,20 +133,36 @@ class Create_Parseur_Dataset():
             list_pile[index] = concatenation
         return list_pile
 
-    def create_dataset(self, dataframe):
-        """ Create input of arithmetic expressions
+    def create_dataset_input(self, dataframe):
+        """ Create NN's vector input of arithmetic expression
         Arg:
         dataframe : DataFrame with (buffer, stack, action) values
         Return:
-        concatenation (list[array]): input X of Neural Network"""
-        concatenation = list()
+        X (list[array]): input X of Neural Network"""
+        X = list()
         fenetre = self.data_collect_fenetre(dataframe['fenetre'])
         pile = self.data_preprocessing_pile(self.data_collect_pile(dataframe['pile']))
         for i in range(len(fenetre)):
-            concatenation.append(np.concatenate([fenetre[i], pile[i]]))
-        return concatenation
+            X.append(np.concatenate([fenetre[i], pile[i]]))
+        return X
+
+    def create_dataset_output(self, dataframe):
+        """ Create NN's vector output of arithmetic expression
+        Arg:
+        dataframe : DataFrame with (buffer, stack, action) values
+        Return:
+        y (array): output y of Neural Network"""
+        y = list()
+        for action in dataframe['label']:
+            if action == 'SHIFT':
+                y.append(1)
+            else:
+                y.append(0)
+        return np.array(y)
 
 if __name__ == "__main__":
     dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
-    X = Create_Parseur_Dataset().create_dataset(dataframe)
-    print(X)
+    X = Create_Parseur_Dataset().create_dataset_input(dataframe)
+    #print(X)
+    y = Create_Parseur_Dataset().create_dataset_output(dataframe)
+    print(y)
