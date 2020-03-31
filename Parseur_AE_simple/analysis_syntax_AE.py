@@ -16,10 +16,10 @@ class Parser():
                         }
 
     def parsing(self):
-        '''
+        """
         Function for parse arithmetic
         operation.
-        '''
+        """
         while self.pile != 'EXPRESSION' or self.expr != [] or self.fenetre != None:
             self.fenetre_stock.append(self.fenetre)
             self.pile_stock.append(self.pile.split())
@@ -48,9 +48,9 @@ class Parser():
         return print('L\'expression est valide')
 
     def shift_test(self):
-        '''
+        """
         Verify if the window is empty
-        '''
+        """
         try:
             self.fenetre[0]
             return True
@@ -58,10 +58,10 @@ class Parser():
             return False
 
     def shift(self):
-        '''
+        """
         shift operation : moving the
         window and stack the pile
-        '''
+        """
         self.tree_construct(self.fenetre[0], self.fenetre[1])
         self.pile += ' ' + self.fenetre[0]
         self.action.append('SHIFT')
@@ -71,10 +71,10 @@ class Parser():
             self.fenetre = None
 
     def unary_reduce_test(self, sentence):
-        '''
+        """
         Test if it is possible to reduce
         NUMBER
-        '''
+        """
         if sentence == '':
             return False
         words = sentence.split()
@@ -85,9 +85,9 @@ class Parser():
             return True
 
     def unary_reduce(self, sentence):
-        '''
+        """
         Reducing operation for NUMBER
-        '''
+        """
         words = sentence.split()
         last_word = self.reduce(words[-1])
         words[-1] = last_word
@@ -96,10 +96,10 @@ class Parser():
         return ' '.join(words)
 
     def binary_reduce_test(self, sentence):
-        '''
+        """
         Test if it is possible to reduce
         operation like *, /, -, +...
-        '''
+        """
         words = sentence.split()
         length_operation = len(words)
         if length_operation < 3:
@@ -111,9 +111,9 @@ class Parser():
             return True
 
     def binary_reduce(self, pile):
-        '''Reducing operation for operation
+        """Reducing operation for operation
         like *, /, -, +...
-        '''
+        """
         words = pile.split()
         length_operation = len(words)
         operation = words[-3:]
@@ -127,10 +127,10 @@ class Parser():
             return ' '.join(words[:-3]) + ' ' + self.reduce(' '.join(operation))
 
     def reduce_test(self, pile):
-        '''
+        """
         Test if it is possible to
         replace in the grammar
-        '''
+        """
         for valeurs in self.grammar.values():
             for valeur in valeurs:
                 if pile == valeur:
@@ -138,11 +138,11 @@ class Parser():
             return False
 
     def reduce(self, pile):
-        '''
+        """
         Replace the expression on top of
         the pile by the expression of the
         grammar
-        '''
+        """
         for cle, valeurs in self.grammar.items():
             for valeur in valeurs:
                 if pile == valeur:

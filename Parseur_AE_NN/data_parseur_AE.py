@@ -14,14 +14,22 @@ class Create_Parseur_Dataframe():
         self.data = pd.DataFrame(columns=['fenetre', 'pile', 'label'])
 
     def generator(self, size):
-        dataset = list()
+        """ Create a lexical arithmetic expression
+        Arg:
+        size (int): arithmetic expression's size
+        Return:
+        arith_expr (list): lexical arithmetic expression """
+        arith_expr = list()
         for i in range(size):
-            dataset.append(random.choice(self.number))
-            dataset.append(random.choice(self.operations))
-        dataset.append(random.choice(self.number))
-        return dataset
+            arith_expr.append(random.choice(self.number))
+            arith_expr.append(random.choice(self.operations))
+        arith_expr.append(random.choice(self.number))
+        return arith_expr
 
     def fenetre_test(self, fenetre):
+        """ Verification of buffer value
+        Arg:
+        fenetre (str): value of buffer """
         fenetre_return = list()
         for element in fenetre:
             if element == None:
@@ -30,8 +38,14 @@ class Create_Parseur_Dataframe():
                 fenetre_return.append(element[0])
         return np.array(fenetre_return)
 
-    def create_dataframe(self, size_dataframe, size_example):
-        for i in range(size_dataframe):
+    def create_dataframe(self, number_example, size_example):
+        """ Create a dataframe of (buffer, stack, action) columns
+        Arg:
+        number_example (int): number of arithmetic expression
+        size_example (int): size of each arithmetic expression
+        Return:
+        self.data (DataFrame) """
+        for i in range(number_example):
             parse_example = Parser(self.generator(size_example))
             parse_example.parsing()
             example = pd.DataFrame({'fenetre': np.array(self.fenetre_test(parse_example.fenetre_stock)),
@@ -47,6 +61,13 @@ class Create_Parseur_Dataset():
         pass
 
     def data_collect_fenetre(self, series_object):
+        """ Collect the value from DataFrame's buffer column
+        and vectorize it (One Hot Encoding)
+        Arg:
+        series_object (Series): buffer's column value
+        Return:
+        series_fenetre (list): vectorized values from
+        the buffer column """
         series_fenetre = list()
         for i, x in enumerate(series_object):
             if x == 'NUMBER':
@@ -66,6 +87,13 @@ class Create_Parseur_Dataset():
         return series_fenetre
 
     def data_collect_pile(self, series_object):
+        """ Collect the value from DataFrame's stack column
+        and vectorize it (One Hot Encoding)
+        Arg:
+        series_object (Series): stack's column value
+        Return:
+        series_pile (list): vectorized values from
+        the buffer column """
         series_pile = list()
         for x in series_object:
             series_subpile = list()
@@ -89,6 +117,14 @@ class Create_Parseur_Dataset():
         return series_pile
 
     def data_preprocessing_pile(self, list_pile):
+        """ Concatenation and completion of the stack
+        values
+        Arg:
+        list_pile (array): separate vectorized values of
+        the stack
+        Return:
+        list_pile (array): concatenation of the different
+        values from the stack """
         for index in range(len(list_pile)):
             size = len(list_pile[index])
             concatenation = np.concatenate([list_pile[index][i] for i in range(size)])
@@ -99,6 +135,11 @@ class Create_Parseur_Dataset():
         return list_pile
 
     def create_dataset(self, dataframe):
+        """ Create input of arithmetic expressions
+        Arg:
+        dataframe : DataFrame with (buffer, stack, action) values
+        Return:
+        concatenation (list[array]): input X of Neural Network"""
         concatenation = list()
         fenetre = self.data_collect_fenetre(dataframe['fenetre'])
         pile = self.data_preprocessing_pile(self.data_collect_pile(dataframe['pile']))

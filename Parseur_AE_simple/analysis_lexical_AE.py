@@ -4,11 +4,11 @@ class Lexical():
         self.expr = expr
 
     def lexicalAnalysis(self):
-        ''' Recove a pile with an arithmetic expression
+        """ Recove a pile with an arithmetic expression
         Arg:
         expr (list): arithmetic expression
         Return:
-        cleanExpression: well formed arithmetic expression'''
+        cleanExpression: well formed arithmetic expression"""
         cleanExpression = list()
         for char in self.expr:
             if not(self.whiteChar(char)):
@@ -16,11 +16,11 @@ class Lexical():
         return cleanExpression
 
     def charType(self, char):
-        ''' Find the type of a character
+        """ Find the type of a character
         Arg:
         char (str): token from arithmetic expression
         Return:
-        tuple: character with its type'''
+        tuple: character with its type"""
         if char == '+':
             return ('ADD', char)
         if char == '-':
@@ -44,11 +44,11 @@ class Lexical():
             pass
 
     def whiteChar(self, char):
-        ''' Verification of character
+        """ Verification of character
         Arg:
         expr (list): arithmetic expression
         Return:
-        char: character on the left'''
+        char: character on the left"""
         if char == ' ':
             return True
         else:
