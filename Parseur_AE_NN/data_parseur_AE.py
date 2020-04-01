@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 
+import torch
+from sklearn.model_selection import train_test_split
+
 import random
 
 from parseur_AE_simple.analysis_syntax_AE import Parser
@@ -138,31 +141,40 @@ class Create_Parseur_Dataset():
         Arg:
         dataframe : DataFrame with (buffer, stack, action) values
         Return:
-        X (list[array]): input X of Neural Network"""
+        X (list[array]): input X of Neural Network """
         X = list()
         fenetre = self.data_collect_fenetre(dataframe['fenetre'])
         pile = self.data_preprocessing_pile(self.data_collect_pile(dataframe['pile']))
         for i in range(len(fenetre)):
             X.append(np.concatenate([fenetre[i], pile[i]]))
-        return X
+        return np.array(X)
 
     def create_dataset_output(self, dataframe):
         """ Create NN's vector output of arithmetic expression
         Arg:
         dataframe : DataFrame with (buffer, stack, action) values
         Return:
-        y (array): output y of Neural Network"""
+        y (array): output y of Neural Network """
         y = list()
         for action in dataframe['label']:
             if action == 'SHIFT':
-                y.append(1)
+                y.append(1.)
             else:
-                y.append(0)
+                y.append(0.)
         return np.array(y)
+
+    def split_train_test(self, X, y):
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size = 0.2, random_state = 42)
+        X_train = torch.from_numpy(X_train).float()
+        X_test = torch.from_numpy(X_test).float()
+        y_train = torch.from_numpy(y_train).view(1, -1)[0]
+        y_test = torch.from_numpy(y_test).view(1, -1)[0]
+        return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
     dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
     X = Create_Parseur_Dataset().create_dataset_input(dataframe)
-    #print(X)
     y = Create_Parseur_Dataset().create_dataset_output(dataframe)
-    print(y)
+    X_train, X_test, y_train, y_test = Create_Parseur_Dataset().split_train_test(X, y)
+    print(X_train.shape, y_train.shape)
