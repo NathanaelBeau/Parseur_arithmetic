@@ -19,7 +19,6 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
-        # return F.log_softmax(x, dim=1)
         return F.log_softmax(x)
 
 
@@ -47,10 +46,6 @@ def train(epochs, model, X_train, X_test, y_train, y_test):
         if epoch % 100 == 0:
             print('epoch - %d (%d%%) train loss - %.2f test loss - %.2f accuracy - %4.f' \
                   % (epoch, epoch / 150 * 10, loss.data.item(), loss_test.data.item(), accuracy))
-
-
-def eval(self, X_test, y_test):
-    pass
 
 
 if __name__ == "__main__":

@@ -131,6 +131,7 @@ class Create_Parseur_Dataset():
             size = len(list_pile[index])
             concatenation = np.concatenate([list_pile[index][i] for i in range(size)])
             while size < 5:
+                # mettre element nul
                 concatenation = np.concatenate((concatenation, np.array([0, 0, 0, 0, 0, 0, 0])))
                 size += 1
             list_pile[index] = concatenation
@@ -166,12 +167,13 @@ class Create_Parseur_Dataset():
 
     def split_train_test(self, X, y):
         X_train_array, X_test_array, y_train_array, y_test_array = train_test_split(
-            X, y, test_size = 0.2, random_state = 42)
+            X, y, test_size=0.2, random_state=42)
         X_train_array = torch.from_numpy(X_train_array).float()
         X_test_array = torch.from_numpy(X_test_array).float()
         y_train = torch.from_numpy(y_train_array.values).view(1, -1)[0]
         y_test = torch.from_numpy(y_test_array.values).view(1, -1)[0]
         return X_train_array, X_test_array, y_train, y_test
+
 
 if __name__ == "__main__":
     dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
