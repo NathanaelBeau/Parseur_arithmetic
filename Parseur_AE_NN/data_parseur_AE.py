@@ -158,23 +158,25 @@ class Create_Parseur_Dataset():
         y = list()
         for action in dataframe['label']:
             if action == 'SHIFT':
-                y.append(1.)
+                y.append(1)
             else:
-                y.append(0.)
-        return np.array(y)
+                y.append(0)
+        y = pd.Series(y)
+        return y
 
     def split_train_test(self, X, y):
-        X_train, X_test, y_train, y_test = train_test_split(
+        X_train_array, X_test_array, y_train_array, y_test_array = train_test_split(
             X, y, test_size = 0.2, random_state = 42)
-        X_train = torch.from_numpy(X_train).float()
-        X_test = torch.from_numpy(X_test).float()
-        y_train = torch.from_numpy(y_train).view(1, -1)[0]
-        y_test = torch.from_numpy(y_test).view(1, -1)[0]
-        return X_train, X_test, y_train, y_test
+        X_train_array = torch.from_numpy(X_train_array).float()
+        X_test_array = torch.from_numpy(X_test_array).float()
+        y_train = torch.from_numpy(y_train_array.values).view(1, -1)[0]
+        y_test = torch.from_numpy(y_test_array.values).view(1, -1)[0]
+        return X_train_array, X_test_array, y_train, y_test
 
 if __name__ == "__main__":
     dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
     X = Create_Parseur_Dataset().create_dataset_input(dataframe)
     y = Create_Parseur_Dataset().create_dataset_output(dataframe)
+    print(type(y.values))
     X_train, X_test, y_train, y_test = Create_Parseur_Dataset().split_train_test(X, y)
     print(X_train.shape, y_train.shape)

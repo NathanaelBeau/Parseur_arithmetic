@@ -41,7 +41,7 @@ def train(epochs, model, X_train, X_test, y_train, y_test):
 
         _, pred = y_pred_test.data.max(1)
 
-        accuracy = pred.eq(y_test.data).sum().item() / y_test.values.size
+        accuracy = pred.eq(y_test.data).sum().item() / y_test.size()[0]
         epoch_data.append([epoch, loss.data.item(), loss_test.data.item(), accuracy])
 
         if epoch % 100 == 0:
@@ -58,6 +58,5 @@ if __name__ == "__main__":
     X = Create_Parseur_Dataset().create_dataset_input(dataframe)
     y = Create_Parseur_Dataset().create_dataset_output(dataframe)
     X_train, X_test, y_train, y_test = Create_Parseur_Dataset().split_train_test(X, y)
-    model = Net(42, 12, 1)
-    print(model.parameters())
-    train(100, model, X_train, X_test, y_train, y_test)
+    model = Net(42, 6, 2)
+    train(1000, model, X_train, X_test, y_train, y_test)
