@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from parseur_AE_NN.data_parseur_AE import *
+from parseur_ae_nn.data_parseur_ae import *
 
 
 class Net(nn.Module):
@@ -22,7 +22,7 @@ class Net(nn.Module):
         return F.log_softmax(x)
 
 
-def train(epochs, model, X_train, X_test, y_train, y_test):
+def train(epochs, model, X_train, X_test, y_train, y_test, PATH='../modelparameters/model'):
     epoch_data = []
     optimizer = optim.Adam(model.parameters())
     loss_fn = nn.NLLLoss()
@@ -47,9 +47,11 @@ def train(epochs, model, X_train, X_test, y_train, y_test):
             print('epoch - %d (%d%%) train loss - %.2f test loss - %.2f accuracy - %4.f' \
                   % (epoch, epoch / 150 * 10, loss.data.item(), loss_test.data.item(), accuracy))
 
+    torch.save(model, PATH)
+
 
 if __name__ == "__main__":
-    dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=100, size_example=11)
+    dataframe = Create_Parseur_Dataframe().create_dataframe(number_example=1000, size_example=11)
     X = Create_Parseur_Dataset().create_dataset_input(dataframe)
     y = Create_Parseur_Dataset().create_dataset_output(dataframe)
     X_train, X_test, y_train, y_test = Create_Parseur_Dataset().split_train_test(X, y)

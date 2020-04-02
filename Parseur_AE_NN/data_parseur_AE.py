@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 import random
 
-from parseur_AE_simple.analysis_syntax_AE import Parser
+from parseur_ae_simple.analysis_syntax_ae import Parser
 
 class Create_Parseur_Dataframe():
 
@@ -140,7 +140,7 @@ class Create_Parseur_Dataset():
     def create_dataset_input(self, dataframe):
         """ Create NN's vector input of arithmetic expression
         Arg:
-        dataframe : DataFrame with (buffer, stack, action) values
+        dataframe: DataFrame with (buffer, stack, action) values
         Return:
         X (list[array]): input X of Neural Network """
         X = list()
@@ -153,7 +153,7 @@ class Create_Parseur_Dataset():
     def create_dataset_output(self, dataframe):
         """ Create NN's vector output of arithmetic expression
         Arg:
-        dataframe : DataFrame with (buffer, stack, action) values
+        dataframe: DataFrame with (buffer, stack, action) values
         Return:
         y (array): output y of Neural Network """
         y = list()
@@ -166,6 +166,10 @@ class Create_Parseur_Dataset():
         return y
 
     def split_train_test(self, X, y):
+        """ Split dataset into train and test set
+        Arg:
+        X: input values
+        y: output values """
         X_train_array, X_test_array, y_train_array, y_test_array = train_test_split(
             X, y, test_size=0.2, random_state=42)
         X_train_array = torch.from_numpy(X_train_array).float()

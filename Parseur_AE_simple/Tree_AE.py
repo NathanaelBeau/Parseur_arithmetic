@@ -1,5 +1,5 @@
-from parseur_AE_simple.analysis_lexical_AE import Lexical
-from parseur_AE_simple.analysis_syntax_AE import Parser
+from parseur_ae_simple.analysis_lexical_ae import Lexical
+from parseur_ae_simple.analysis_syntax_ae import Parser
 
 
 class ConsTree:
