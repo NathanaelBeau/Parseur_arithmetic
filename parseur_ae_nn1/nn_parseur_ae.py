@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from parseur_ae_nn.data_parseur_ae import *
+from parseur_ae_nn1.data_parseur_ae import *
 
 
 class Net(nn.Module):
