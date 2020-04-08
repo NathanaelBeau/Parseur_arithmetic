@@ -19,10 +19,10 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=-1)
 
 
-def train(epochs, model, X_train, X_test, y_train, y_test, PATH='../modelparameters/model'):
+def train(epochs, model, X_train, X_test, y_train, y_test, PATH='./modelparameters/model.pt'):
     epoch_data = []
     optimizer = optim.Adam(model.parameters())
     loss_fn = nn.NLLLoss()

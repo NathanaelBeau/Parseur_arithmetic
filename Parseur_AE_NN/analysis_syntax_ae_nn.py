@@ -1,18 +1,23 @@
 from parseur_ae_simple.analysis_lexical_ae import Lexical
+from parseur_ae_nn.nn_parseur_ae import Net
 
-class Parser():
+import numpy as np
+
+import torch
+import torch.nn as nn
+
+
+class Parser:
 
     def __init__(self, expr):
         self.expr = expr
         self.fenetre = self.expr.pop(0)
         self.pile = ''
-        self.store = list()
-        self.action = list()
         self.fenetre_stock = list()
-        self.pile_stock = list()
+        self.PATH = './modelparameters/model.pt'
         self.grammar = {'EXPRESSION': ['NUMBER', 'LPAR EXPRESSION RPAR',
-                        'EXPRESSION MINUS EXPRESSION', 'EXPRESSION ADD EXPRESSION',
-                        'EXPRESSION DIVIDE EXPRESSION', 'EXPRESSION DOT EXPRESSION']
+                                       'EXPRESSION MINUS EXPRESSION', 'EXPRESSION ADD EXPRESSION',
+                                       'EXPRESSION DIVIDE EXPRESSION', 'EXPRESSION DOT EXPRESSION']
                         }
 
     def parsing(self):
@@ -20,95 +25,98 @@ class Parser():
         Function for parse arithmetic
         operation.
         """
-        while self.pile != 'EXPRESSION' or self.expr != [] or self.fenetre != None:
-            self.fenetre_stock.append(self.fenetre)
-            self.pile_stock.append(self.pile.split())
-            if not(self.unary_reduce_test(self.pile)):
-                if not(self.binary_reduce_test(self.pile)):
-                    if self.shift_test():
-                        self.shift()  # shift si on peut rien faire
-                else:  # on reduce une expression
-                    if self.shift_test():  # voir si fenetre est None
-                        words = self.pile.split()
-                        if self.fenetre[0] in ('DOT', 'DIVIDE'):  # priorisation
-                            if words[-2] in ('ADD', 'MINUS'):
-                                self.shift()
-                            else:
-                                self.pile = self.binary_reduce(self.pile)
-                        else:
-                            self.pile = self.binary_reduce(self.pile)
-                    else:
+        model = torch.load(self.PATH)
+        model.eval()
+        while self.pile != 'EXPRESSION' or self.expr != [] or self.fenetre is not None:
+            try:
+                buffer = self.transform_buffer(self.fenetre[0])
+            except:
+                buffer = self.transform_buffer('None')
+            stack = self.preprocess_stack(self.transform_stack(self.pile))
+            X = torch.from_numpy(np.concatenate([buffer, stack])).float()
+            action = self.action_reconstruct(torch.argmax(model(X)))
+            if action == 'SHIFT':
+                self.shift()
+            else:
+                try:
+                    try:
+                        self.pile = self.unary_reduce(self.pile)
+                    except:
                         self.pile = self.binary_reduce(self.pile)
-            else:  # on reduce NUMBER
-                self.pile = self.unary_reduce(self.pile)
-            if self.expr == [] and self.pile != 'EXPRESSION':
-                if self.shift_test() == False:
-                    if not(self.binary_reduce_test(self.pile)) and not(self.unary_reduce_test(self.pile)):
-                        return print('L\'expression n\'est pas valide')
+                except:
+                    return print('L\'expression est invalide')
         return print('L\'expression est valide')
 
-    def shift_test(self):
-        """
-        Verify if the window is empty
-        """
-        try:
-            self.fenetre[0]
-            return True
-        except:
-            return False
+    def transform_buffer(self, buffer):
+        if buffer == 'NUMBER':
+            return np.array([1, 0, 0, 0, 0, 0, 0])
+        elif buffer == 'EXPRESSION':
+            return np.array([0, 1, 0, 0, 0, 0, 0])
+        elif buffer == 'DOT':
+            return np.array([0, 0, 1, 0, 0, 0, 0])
+        elif buffer == 'DIVIDE':
+            return np.array([0, 0, 0, 1, 0, 0, 0])
+        elif buffer == 'ADD':
+            return np.array([0, 0, 0, 0, 1, 0, 0])
+        elif buffer == 'MINUS':
+            return np.array([0, 0, 0, 0, 0, 1, 0])
+        elif buffer == 'None':
+            return np.array([0, 0, 0, 0, 0, 0, 1])
+
+    def transform_stack(self, stack):
+        stack_list = list()
+        stack = stack.split()
+        for value in stack:
+            if value == 'NUMBER':
+                stack_list.append(np.array([1, 0, 0, 0, 0, 0, 0]))
+            elif value == 'EXPRESSION':
+                stack_list.append(np.array([0, 1, 0, 0, 0, 0, 0]))
+            elif value == 'DOT':
+                stack_list.append(np.array([0, 0, 1, 0, 0, 0, 0]))
+            elif value == 'DIVIDE':
+                stack_list.append(np.array([0, 0, 0, 1, 0, 0, 0]))
+            elif value == 'ADD':
+                stack_list.append(np.array([0, 0, 0, 0, 1, 0, 0]))
+            elif value == 'MINUS':
+                stack_list.append(np.array([0, 0, 0, 0, 0, 1, 0]))
+        if not stack_list:
+            stack_list.append(np.array([0, 0, 0, 0, 0, 0, 1]))
+        return stack_list
+
+    def preprocess_stack(self, stack_list):
+        size = len(stack_list)
+        concatenation = np.concatenate([stack_list[i] for i in range(size)])
+        while size < 5:
+            # mettre element nul
+            concatenation = np.concatenate((concatenation, np.array([0, 0, 0, 0, 0, 0, 0])))
+            size += 1
+        return np.array(concatenation)
+
+    def action_reconstruct(self, action_tenseur):
+        if action_tenseur.item() == 1:
+            return 'SHIFT'
+        else:
+            return 'REDUCE'
 
     def shift(self):
         """
         shift operation : moving the
         window and stack the pile
         """
-        self.tree_construct(self.fenetre[0], self.fenetre[1])
         self.pile += ' ' + self.fenetre[0]
-        self.action.append('SHIFT')
         try:
             self.fenetre = self.expr.pop(0)
         except:
             self.fenetre = None
 
-    def unary_reduce_test(self, sentence):
-        """
-        Test if it is possible to reduce
-        NUMBER
-        """
-        if sentence == '':
-            return False
-        words = sentence.split()
-        last_word = self.reduce_test(words[-1])
-        if not(last_word):
-            return False
-        else:
-            return True
-
-    def unary_reduce(self, sentence):
+    def unary_reduce(self, pile):
         """
         Reducing operation for NUMBER
         """
-        words = sentence.split()
+        words = pile.split()
         last_word = self.reduce(words[-1])
         words[-1] = last_word
-        self.action.append('REDUCE')
-        self.tree_construct('EXPRESSION', 'NUMBER')
         return ' '.join(words)
-
-    def binary_reduce_test(self, sentence):
-        """
-        Test if it is possible to reduce
-        operation like *, /, -, +...
-        """
-        words = sentence.split()
-        length_operation = len(words)
-        if length_operation < 3:
-            return False
-        operation = words[-3:]
-        if not(self.reduce_test(' '.join(operation))):
-            return False
-        else:
-            return True
 
     def binary_reduce(self, pile):
         """Reducing operation for operation
@@ -118,24 +126,9 @@ class Parser():
         length_operation = len(words)
         operation = words[-3:]
         if length_operation == 3:
-            self.action.append('REDUCE')
-            self.tree_construct('EXPRESSION', operation)
             return self.reduce(' '.join(operation))
         else:
-            self.action.append('REDUCE')
-            self.tree_construct('EXPRESSION', operation)
             return ' '.join(words[:-3]) + ' ' + self.reduce(' '.join(operation))
-
-    def reduce_test(self, pile):
-        """
-        Test if it is possible to
-        replace in the grammar
-        """
-        for valeurs in self.grammar.values():
-            for valeur in valeurs:
-                if pile == valeur:
-                    return True
-            return False
 
     def reduce(self, pile):
         """
@@ -150,9 +143,6 @@ class Parser():
 
 
 if __name__ == "__main__":
-    test = Lexical('2*2+2*2')
+    test = Lexical('2*2+2*')
     testparse = Parser(test.lexicalAnalysis())
     testparse.parsing()
-    print(testparse.action)
-    print(len(testparse.fenetre_stock), testparse.fenetre_stock)
-    print(len(testparse.pile_stock), testparse.pile_stock)
