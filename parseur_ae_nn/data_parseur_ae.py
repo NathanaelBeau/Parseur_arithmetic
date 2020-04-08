@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 import random
 
-from parseur_ae_simple1.analysis_syntax_ae import Parser
+from parseur_ae_simple.analysis_syntax_ae import Parser
 
 class Create_Parseur_Dataframe():
 

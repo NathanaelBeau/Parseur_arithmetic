@@ -1,4 +1,4 @@
-from parseur_ae_simple1.analysis_lexical_ae import Lexical
+from parseur_ae_simple.analysis_lexical_ae import Lexical
 from parseur_ae_nn.nn_parseur_ae import Net
 
 import numpy as np
