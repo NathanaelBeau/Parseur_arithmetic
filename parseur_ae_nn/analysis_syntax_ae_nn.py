@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 
 
-class Parser:
+class Parser_NN:
 
     def __init__(self, expr):
         self.expr = expr
@@ -48,6 +48,9 @@ class Parser:
         return print('L\'expression est valide')
 
     def transform_buffer(self, buffer):
+        """
+        Vectorized the buffer for NN
+        """
         if buffer == 'NUMBER':
             return np.array([1, 0, 0, 0, 0, 0, 0])
         elif buffer == 'EXPRESSION':
@@ -64,6 +67,9 @@ class Parser:
             return np.array([0, 0, 0, 0, 0, 0, 1])
 
     def transform_stack(self, stack):
+        """
+        Vectorized the stack for NN
+        """
         stack_list = list()
         stack = stack.split()
         for value in stack:
@@ -144,5 +150,5 @@ class Parser:
 
 if __name__ == "__main__":
     test = Lexical('2*2+2*')
-    testparse = Parser(test.lexicalAnalysis())
+    testparse = Parser_NN(test.lexicalAnalysis())
     testparse.parsing()
