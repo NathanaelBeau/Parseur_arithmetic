@@ -27,13 +27,13 @@ def train(epochs, model, X_train, X_test, y_train, y_test, PATH='./modelparamete
     optimizer = optim.Adam(model.parameters())
     loss_fn = nn.NLLLoss()
     for epoch in range(1, epochs):
-        optimizer.zero_grad()
+        optimizer.zero_grad()  # set the grad to 0
         y_pred = model(X_train)
 
         loss = loss_fn(y_pred, y_train)
-        loss.backward()
+        loss.backward()  # compute derivative wrt parameters
 
-        optimizer.step()
+        optimizer.step()  # set learning rate
 
         y_pred_test = model(X_test)
         loss_test = loss_fn(y_pred_test, y_test)
